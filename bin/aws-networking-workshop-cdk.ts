@@ -4,8 +4,14 @@ import { App } from 'aws-cdk-lib';
 import { NetworkStack } from '../lib/network-stack';
 import { SubnetType } from 'aws-cdk-lib/aws-ec2';
 
+const env = {
+  account: process.env.CDK_DEFAULT_ACCOUNT,
+  region: process.env.CDK_DEFAULT_REGION 
+}
+
 const app = new App();
 new NetworkStack(app, 'network', {
+  env,
   vpcProps: {
     vpcName: 'VPC A',
     cidr: '10.0.0.0/16',
