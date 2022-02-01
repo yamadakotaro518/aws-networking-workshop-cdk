@@ -1,3 +1,6 @@
+このリポジトリは[aws networking workshop](https://networking.workshop.aws/)で構築するリソースをCDKで記述したものです。
+以下CDKの雛形そのまま↓
+
 # Welcome to your CDK TypeScript project!
 
 This is a blank project for TypeScript development with CDK.
