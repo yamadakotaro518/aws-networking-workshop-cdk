@@ -1,12 +1,16 @@
-import { Stack, StackProps } from "aws-cdk-lib"
-import { AmazonLinuxImage, CfnInternetGateway, CfnVPCGatewayAttachment, DefaultInstanceTenancy, Instance, InstanceClass, InstanceSize, InstanceType, RouterType, Subnet, SubnetConfiguration, SubnetType, Vpc, VpcProps } from "aws-cdk-lib/aws-ec2";
+import { Stack, StackProps } from "aws-cdk-lib";
+import {
+  SubnetConfiguration,
+  SubnetType,
+  Vpc
+} from "aws-cdk-lib/aws-ec2";
 import { Construct } from "constructs";
 
 export interface NetworkProps extends StackProps {
-  readonly vpcName: string,
-  readonly cidr: string,
-  readonly maxAzs?: number,
-  readonly subnetConfiguration? : SubnetConfiguration[],
+  readonly vpcName: string;
+  readonly cidr: string;
+  readonly maxAzs?: number;
+  readonly subnetConfiguration?: SubnetConfiguration[];
 }
 export const setDefaultValue = (props: NetworkProps) => {
   return {
@@ -14,13 +18,13 @@ export const setDefaultValue = (props: NetworkProps) => {
     subnetConfiguration: [
       {
         cidrMask: 24,
-        name: 'public',
-        subnetType: SubnetType.PUBLIC
-      }
+        name: "public",
+        subnetType: SubnetType.PUBLIC,
+      },
     ],
-    ...props
-  }
-}
+    ...props,
+  };
+};
 
 /**
  * Network Stack
@@ -29,9 +33,9 @@ export const setDefaultValue = (props: NetworkProps) => {
 export class NetworkStack extends Stack {
   readonly vpc: Vpc;
 
-  constructor(scope: Construct, id: string, props: NetworkProps){
+  constructor(scope: Construct, id: string, props: NetworkProps) {
     super(scope, id, props);
 
-    this.vpc = new Vpc(this, 'vpc', { ...setDefaultValue(props)})
+    this.vpc = new Vpc(this, "vpc", { ...setDefaultValue(props) });
   }
 }
