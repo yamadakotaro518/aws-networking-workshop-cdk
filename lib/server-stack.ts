@@ -6,6 +6,9 @@ import {
   InstanceClass,
   InstanceSize,
   InstanceType,
+  Peer,
+  Port,
+  SecurityGroup,
   SubnetSelection,
   SubnetType,
   Vpc
@@ -17,6 +20,10 @@ export interface ServerProps extends StackProps {
   readonly instanceType?: InstanceType;
   readonly machineImage?: IMachineImage;
   readonly vpcSubnets?: SubnetSelection;
+  /**
+   * アクセス許可するIPアドレス
+   */
+  readonly allowIps?: string[];
 }
 export const setDefaultValue = (props: ServerProps) => {
   return {
@@ -32,10 +39,28 @@ export const setDefaultValue = (props: ServerProps) => {
  * Server関連のリソースを作成する
  */
 export class ServerStack extends Stack {
-  readonly vpc: Vpc;
 
   constructor(scope: Construct, id: string, props: ServerProps) {
     super(scope, id, props);
+
+    const {
+      vpc,
+      instanceType,
+      machineImage,
+      vpcSubnets,
+      allowIps
+    } = setDefaultValue(props);
+
+    // セキュリティグループ作成
+    const securityGroup = new SecurityGroup(this, 'securityGroup', {
+      securityGroupName: 'security group of ec2',
+      vpc: vpc
+    })
+
+    allowIps?.forEach(ip => {
+      securityGroup.addIngressRule(Peer.ipv4(ip), Port.tcp(22))
+      securityGroup.addIngressRule(Peer.ipv4(ip), Port.icmpPing())
+    })
 
     new Instance(this, "ec2Instance", { ...setDefaultValue(props) });
   }
