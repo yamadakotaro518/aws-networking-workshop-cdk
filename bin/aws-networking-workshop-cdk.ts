@@ -34,10 +34,10 @@ const server1 = new ServerStack(app, "server1", {
 const server2 = new ServerStack(app, "server2", {
   env,
   vpc: network2.vpc,
-  allowIps: [server1.publicIpAdress],
+  allowCiderBlocks: [server1.publicIpAdress + "/32"],
 });
 const server3 = new ServerStack(app, "server3", {
   env,
   vpc: network3.vpc,
-  allowIps: [server1.publicIpAdress, server2.publicIpAdress],
+  allowCiderBlocks: [server1.publicIpAdress + "/32", server2.publicIpAdress + "/32"],
 });

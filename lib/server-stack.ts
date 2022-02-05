@@ -24,7 +24,7 @@ export interface ServerProps extends StackProps {
   /**
    * アクセス許可するIPアドレス
    */
-  readonly allowIps?: string[];
+  readonly allowCiderBlocks?: string[];
 }
 export const setDefaultValue = (props: ServerProps) => {
   return {
@@ -50,7 +50,7 @@ export class ServerStack extends Stack {
       instanceType,
       machineImage,
       vpcSubnets,
-      allowIps
+      allowCiderBlocks
     } = setDefaultValue(props);
 
     // セキュリティグループ作成
@@ -59,7 +59,7 @@ export class ServerStack extends Stack {
       vpc: vpc
     })
 
-    allowIps?.forEach(ip => {
+    allowCiderBlocks?.forEach(ip => {
       securityGroup.addIngressRule(Peer.ipv4(ip), Port.tcp(22))
       securityGroup.addIngressRule(Peer.ipv4(ip), Port.icmpPing())
     })
