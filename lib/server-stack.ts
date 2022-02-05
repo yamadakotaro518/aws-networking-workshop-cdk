@@ -13,6 +13,7 @@ import {
   SubnetType,
   Vpc
 } from "aws-cdk-lib/aws-ec2";
+import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 
 export interface ServerProps extends StackProps {
@@ -39,6 +40,7 @@ export const setDefaultValue = (props: ServerProps) => {
  * Server関連のリソースを作成する
  */
 export class ServerStack extends Stack {
+  readonly publicIpAdress: string;
 
   constructor(scope: Construct, id: string, props: ServerProps) {
     super(scope, id, props);
@@ -62,6 +64,22 @@ export class ServerStack extends Stack {
       securityGroup.addIngressRule(Peer.ipv4(ip), Port.icmpPing())
     })
 
-    new Instance(this, "ec2Instance", { ...setDefaultValue(props) });
+    // ec2用のロール作成
+    const role = new Role(this, 'ec2role', {
+      assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+      managedPolicies: [
+        ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore')
+      ]
+    })
+
+    const instance = new Instance(this, "ec2Instance", {
+      vpc,
+      instanceType,
+      machineImage,
+      vpcSubnets,
+      securityGroup,
+      role
+    });
+    this.publicIpAdress = instance.instancePublicIp
   }
 }

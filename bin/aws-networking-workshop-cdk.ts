@@ -1,17 +1,8 @@
 #!/usr/bin/env node
-import "source-map-support/register";
 import { App } from "aws-cdk-lib";
+import "source-map-support/register";
 import { NetworkStack } from "../lib/network-stack";
-import { ServerStack } from '../lib/server-stack';
-import {
-  AmazonLinuxImage,
-  Instance,
-  InstanceClass,
-  InstanceSize,
-  InstanceType,
-  SubnetType,
-  Vpc,
-} from "aws-cdk-lib/aws-ec2";
+import { ServerStack } from "../lib/server-stack";
 
 const env = {
   account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -19,35 +10,34 @@ const env = {
 };
 
 const app = new App();
+
 const network1 = new NetworkStack(app, "network1", {
   env,
   vpcName: "VPC A",
   cidr: "10.0.0.0/16",
 });
-
-new ServerStack(app, 'server1', {
-  env,
-  vpc: network1.vpc
-})
-
 const network2 = new NetworkStack(app, "network2", {
   env,
   vpcName: "VPC B",
   cidr: "10.1.0.0/16",
 });
-
-new ServerStack(app, 'server2', {
-  env,
-  vpc: network2.vpc
-})
-
 const network3 = new NetworkStack(app, "network3", {
   env,
   vpcName: "VPC C",
   cidr: "10.2.0.0/16",
 });
 
-new ServerStack(app, 'server3', {
+const server1 = new ServerStack(app, "server1", {
   env,
-  vpc: network3.vpc
-})
+  vpc: network1.vpc,
+});
+const server2 = new ServerStack(app, "server2", {
+  env,
+  vpc: network2.vpc,
+  allowIps: [server1.publicIpAdress],
+});
+const server3 = new ServerStack(app, "server3", {
+  env,
+  vpc: network3.vpc,
+  allowIps: [server1.publicIpAdress, server2.publicIpAdress],
+});
