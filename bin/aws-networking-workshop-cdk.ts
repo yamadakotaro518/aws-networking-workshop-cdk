@@ -33,6 +33,7 @@ const network3 = new NetworkStack(app, "network3", {
 });
 
 new TransitGatewayStack(app, "trangitGateway", {
+  env,
   vpcs: [network1.vpc, network2.vpc, network3.vpc]
 })
 

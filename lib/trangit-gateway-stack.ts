@@ -35,7 +35,7 @@ export class TransitGatewayStack extends Stack {
       })
 
       // transit gateway attachmentを作成
-      new CfnTransitGatewayAttachment(this, `transitGatewayAttachment-vpc${vpcIndex}`, {
+      const transitGatewayAAttachment = new CfnTransitGatewayAttachment(this, `transitGatewayAttachment-vpc${vpcIndex}`, {
         transitGatewayId: transitGateway.attrId,
         vpcId: vpc.vpcId,
         subnetIds: [subnet1ForTGW.subnetId, subnet2ForTGW.subnetId]
@@ -43,11 +43,12 @@ export class TransitGatewayStack extends Stack {
 
       // サブネットのルートテーブルの向き先にTGWを追加
       vpc.publicSubnets.forEach((publicSubnet, subnetIndex) => {
-        new CfnRoute(this, `routeForTGW-vpc${vpcIndex}-subnet${subnetIndex}`,{
+        const route = new CfnRoute(this, `routeForTGW-vpc${vpcIndex}-subnet${subnetIndex}`,{
           routeTableId: publicSubnet.routeTable.routeTableId,
           destinationCidrBlock: '10.0.0.0/8',
           transitGatewayId: this.transitGatewayId
         })
+        route.addDependsOn(transitGatewayAAttachment)
       })
     })
   }
