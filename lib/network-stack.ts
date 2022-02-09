@@ -1,9 +1,13 @@
-import { Stack, StackProps } from "aws-cdk-lib";
+import { RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import {
+  FlowLog,
+  FlowLogDestination,
   SubnetConfiguration,
   SubnetType,
   Vpc
 } from "aws-cdk-lib/aws-ec2";
+import { Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
+import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
 
 export interface NetworkProps extends StackProps {
@@ -36,6 +40,19 @@ export class NetworkStack extends Stack {
   constructor(scope: Construct, id: string, props: NetworkProps) {
     super(scope, id, props);
 
-    this.vpc = new Vpc(this, "vpc", { ...setDefaultValue(props) });
+    const flowLogLogGroup = new LogGroup(this, 'flowlog-log-group', {
+      logGroupName: 'vpc-flowlog',
+      retention: RetentionDays.ONE_MONTH,
+      removalPolicy: RemovalPolicy.DESTROY // 毎回作り直ししたい
+    })
+
+    new Vpc(this, "vpc", { 
+      ...setDefaultValue(props),
+      flowLogs: {
+        'vpc-flowlog': {
+          destination: FlowLogDestination.toCloudWatchLogs(flowLogLogGroup)
+        }
+      }
+    });
   }
 }
