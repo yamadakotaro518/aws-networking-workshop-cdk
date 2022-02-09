@@ -1,6 +1,9 @@
 import { Stack, StackProps } from "aws-cdk-lib";
 import {
+  AmazonLinuxCpuType,
+  AmazonLinuxGeneration,
   AmazonLinuxImage,
+  AmazonLinuxKernel,
   IMachineImage,
   Instance,
   InstanceClass,
@@ -31,7 +34,11 @@ export interface ServerProps extends StackProps {
 export const setDefaultValue = (props: ServerProps) => {
   return {
     instanceType: InstanceType.of(InstanceClass.T2, InstanceSize.MICRO),
-    machineImage: new AmazonLinuxImage(),
+    machineImage: new AmazonLinuxImage({
+      generation: AmazonLinuxGeneration.AMAZON_LINUX_2,
+      kernel: AmazonLinuxKernel.KERNEL5_X,
+      cpuType: AmazonLinuxCpuType.X86_64
+    }),
     vpcSubnets: props.vpc.selectSubnets({ subnetType: SubnetType.PUBLIC }),
     ...props,
   };
