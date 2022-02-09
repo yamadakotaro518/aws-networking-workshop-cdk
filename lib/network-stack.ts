@@ -41,17 +41,15 @@ export class NetworkStack extends Stack {
     super(scope, id, props);
 
     const flowLogLogGroup = new LogGroup(this, 'flowlog-log-group', {
-      logGroupName: 'vpc-flowlog',
+      logGroupName: `vpc-flowlog-${props.vpcName}`,
       retention: RetentionDays.ONE_MONTH,
       removalPolicy: RemovalPolicy.DESTROY // 毎回作り直ししたい
     })
 
-    const flowLogId = `vpc-flowlog-${props.vpcName}`
-
     this.vpc = new Vpc(this, "vpc", { 
       ...setDefaultValue(props),
       flowLogs: {
-        flowLogId : {
+        flowlog : {
           destination: FlowLogDestination.toCloudWatchLogs(flowLogLogGroup)
         }
       }
