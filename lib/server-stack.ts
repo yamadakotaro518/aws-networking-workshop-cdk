@@ -11,10 +11,12 @@ import {
   SecurityGroup,
   SubnetSelection,
   SubnetType,
+  UserData,
   Vpc
 } from "aws-cdk-lib/aws-ec2";
 import { ManagedPolicy, Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
+import { readFileSync } from "fs";
 
 export interface ServerProps extends StackProps {
   readonly vpc: Vpc;
@@ -73,13 +75,18 @@ export class ServerStack extends Stack {
       ]
     })
 
+    const rawData = readFileSync(__dirname + "/userdata", "utf8")
+    const userData = UserData.custom(rawData)
+
     const instance = new Instance(this, "ec2Instance", {
       vpc,
       instanceType,
       machineImage,
       vpcSubnets,
       securityGroup,
-      role
+      role,
+      userData,
+      userDataCausesReplacement: false
     });
     this.publicIpAdress = instance.instancePublicIp
   }
