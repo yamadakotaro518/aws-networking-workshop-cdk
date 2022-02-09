@@ -46,7 +46,7 @@ export class NetworkStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY // 毎回作り直ししたい
     })
 
-    new Vpc(this, "vpc", { 
+    this.vpc = new Vpc(this, "vpc", { 
       ...setDefaultValue(props),
       flowLogs: {
         'vpc-flowlog': {
