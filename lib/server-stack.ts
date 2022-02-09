@@ -62,6 +62,7 @@ export class ServerStack extends Stack {
     allowCiderBlocks?.forEach(ip => {
       securityGroup.addIngressRule(Peer.ipv4(ip), Port.tcp(22))
       securityGroup.addIngressRule(Peer.ipv4(ip), Port.icmpPing())
+      securityGroup.addIngressRule(Peer.ipv4(ip), Port.tcp(5201))
     })
 
     // ec2用のロール作成
