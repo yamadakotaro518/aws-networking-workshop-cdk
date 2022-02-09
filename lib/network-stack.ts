@@ -46,10 +46,12 @@ export class NetworkStack extends Stack {
       removalPolicy: RemovalPolicy.DESTROY // 毎回作り直ししたい
     })
 
+    const flowLogId = `vpc-flowlog-${props.vpcName}`
+
     this.vpc = new Vpc(this, "vpc", { 
       ...setDefaultValue(props),
       flowLogs: {
-        'vpc-flowlog': {
+        flowLogId : {
           destination: FlowLogDestination.toCloudWatchLogs(flowLogLogGroup)
         }
       }
