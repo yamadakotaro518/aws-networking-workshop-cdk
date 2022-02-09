@@ -6,7 +6,6 @@ import {
   SubnetType,
   Vpc
 } from "aws-cdk-lib/aws-ec2";
-import { Role, ServicePrincipal } from "aws-cdk-lib/aws-iam";
 import { LogGroup, RetentionDays } from "aws-cdk-lib/aws-logs";
 import { Construct } from "constructs";
 

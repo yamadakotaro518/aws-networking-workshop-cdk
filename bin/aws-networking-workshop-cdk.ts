@@ -18,17 +18,17 @@ const app = new App();
 
 const network1 = new NetworkStack(app, "network1", {
   env,
-  vpcName: "VPC A",
+  vpcName: "VPC-A",
   cidr: vpcACiderBlock,
 });
 const network2 = new NetworkStack(app, "network2", {
   env,
-  vpcName: "VPC B",
+  vpcName: "VPC-B",
   cidr: vpcBCiderBlock,
 });
 const network3 = new NetworkStack(app, "network3", {
   env,
-  vpcName: "VPC C",
+  vpcName: "VPC-C",
   cidr: vpcCCiderBlock,
 });
 
